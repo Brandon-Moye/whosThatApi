@@ -29,8 +29,9 @@ app.get('/api/whosThatApi/Pokemon', async (req, res) => {
         const pokemonDataInText = await pokemonRes.text()
         console.log(pokemonDataInText)
         const $ = cheerio.load(pokemonDataInText)
-        console.log($.html)
-        res.sendStatus(200)
+        const pokedexNumber = $('main').get().map(val => $(val).text())
+        // console.log(pokedexNumber)
+        res.status(200).send({pokedexNumber})
     } catch (err) {
         console.log(`Looks like Team Rocket is blasting off again! ${err}`)
         res.sendStatus(500)
