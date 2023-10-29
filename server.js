@@ -32,9 +32,26 @@ app.get('/api/whosThatApi/Pokemon', async (req, res) => {
         // console.log(pokedexNumber)
         const nationalDexNum = $('td:first').text()
         const type = $('.itype:first').text()
-        const species = $('td:nth-child(2)').text()
+        const secondaryTyping = $('.itype:nth(1)').text()
+        const species = $('td:nth(2)').text()
         res.status(200)
-        return res.send([nationalDexNum, type, species])
+        // return res.send([nationalDexNum, type, species])
+
+        if (type !== secondaryTyping) {
+            return res.send({
+                "Pokedex Num": nationalDexNum,
+                "Type": type,
+                "Secondary Type": secondaryTyping,
+                "Species": species
+            })    
+        } else {
+            return res.send({
+                "Pokedex Num": nationalDexNum,
+                "Type": type,
+                "Secondary Type": "",
+                "Species": species
+            }) 
+        }
     } catch (err) {
         console.log(`Looks like Team Rocket is blasting off again! ${err}`)
         res.sendStatus(500)
