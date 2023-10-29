@@ -27,11 +27,31 @@ app.get('/api/whosThatApi/Pokemon', async (req, res) => {
         const pokedexEntryUrl = baseUrl(pokemon)
         const pokemonRes = await fetch(pokedexEntryUrl)
         const pokemonDataInText = await pokemonRes.text()
-        console.log(pokemonDataInText)
         const $ = cheerio.load(pokemonDataInText)
-        const pokedexNumber = $('main').get().map(val => $(val).text())
+        // const vitalsTable = $('main').get().map(val => $(val).text())
         // console.log(pokedexNumber)
-        res.status(200).send({pokedexNumber})
+        const nationalDexNum = $('td:first').text()
+        const type = $('.itype:first').text()
+        const secondaryTyping = $('.itype:nth(1)').text()
+        const species = $('td:nth(2)').text()
+        res.status(200)
+        // return res.send([nationalDexNum, type, species])
+
+        if (type !== secondaryTyping) {
+            return res.send({
+                "Pokedex Num": nationalDexNum,
+                "Type": type,
+                "Secondary Type": secondaryTyping,
+                "Species": species
+            })    
+        } else {
+            return res.send({
+                "Pokedex Num": nationalDexNum,
+                "Type": type,
+                "Secondary Type": "",
+                "Species": species
+            }) 
+        }
     } catch (err) {
         console.log(`Looks like Team Rocket is blasting off again! ${err}`)
         res.sendStatus(500)
