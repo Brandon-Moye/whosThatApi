@@ -30,7 +30,11 @@ app.get('/api/whosThatApi/Pokemon', async (req, res) => {
         const $ = cheerio.load(pokemonDataInText)
         // const vitalsTable = $('main').get().map(val => $(val).text())
         // console.log(pokedexNumber)
+        const pokemonName = $('h1:first').text()
         const nationalDexNum = $('td:first').text()
+        // const pokemonImage = $(`img[src*="${pokemonName}"]:first`).attr('src')
+        const pokemonImage = $(`img:nth(1)`).attr('src');
+
         const type = $('.itype:first').text()
         const secondaryTyping = $('.itype:nth(1)').text()
         const species = $('td:nth(2)').text()
@@ -39,6 +43,8 @@ app.get('/api/whosThatApi/Pokemon', async (req, res) => {
 
         if (type !== secondaryTyping) {
             return res.send({
+                "Photo": pokemonImage,
+                "Name": pokemonName,
                 "Pokedex Num": nationalDexNum,
                 "Type": type,
                 "Secondary Type": secondaryTyping,

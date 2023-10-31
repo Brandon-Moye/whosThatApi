@@ -1,2 +1,2 @@
 ###
-GET http://localhost:5353/api/whosThatApi/Pokemon?pokemon=annihilape
+GET http://localhost:5353/api/whosThatApi/Pokemon?pokemon=iron-valiant
