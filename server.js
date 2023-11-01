@@ -42,8 +42,11 @@ app.get('/api/whosThatApi/Pokemon', async (req, res) => {
         // const pokemonImage = $(`img:nth(1)`).attr('src');
 
         const type = $('.itype:first').text()
-        const secondaryTyping = $('.itype:nth(1)').text()
+        const secondaryTyping = $('table[class="vitals-table"] > tbody > tr:nth(1) > td > a:nth(1)').text()
         const species = $('td:nth(2)').text()
+        const eggGroupOne = $('[href*=egg]:first').text()
+        // const eggGroupTwo = $('[href*=egg]:nth(1)').text()
+        const eggGroupTwo = $('[href*=egg]:first + a').text()
         res.status(200)
         // return res.send([nationalDexNum, type, species])
 
@@ -52,19 +55,22 @@ app.get('/api/whosThatApi/Pokemon', async (req, res) => {
                 "Photo": pokemonImage,
                 "Name": pokemonName,
                 "Pokedex Num": nationalDexNum,
-                "Type": type,
-                "Secondary Type": secondaryTyping,
-                "Species": species
+                "Type": [type, secondaryTyping],
+                // "Secondary Type": secondaryTyping,
+                "Species": species,
+                "Egg Group(s)": [eggGroupOne, eggGroupTwo]
             })    
-        } else {
-            return res.send({
-                "Photo": pokemonImage,
-                "Name": pokemonName, 
-                "Pokedex Num": nationalDexNum,
-                "Type": type,
-                // "Secondary Type": "",
-                "Species": species
-            }) 
+        } 
+        else {
+            // return res.send({
+            //     "Photo": pokemonImage,
+            //     "Name": pokemonName, 
+            //     "Pokedex Num": nationalDexNum,
+            //     "Type": type,
+            //     "Species": species,
+            //     "Egg Group(s)": [eggGroupOne, eggGroupTwo]
+
+            // }) 
         }
     } catch (err) {
         console.log(`Looks like Team Rocket is blasting off again! ${err}`)
