@@ -17,12 +17,17 @@ app.get('/', (req, res) => {
 
 app.get('/api/whosThatApi/Pokemon', async (req, res) => {
     const { pokemon } = req.query
-    console.log(`Pokemon Name: ${pokemon}`)
     if(!pokemon) {
         return res.sendStatus(403)
     }
 
-
+    // if (pokemon === "national") {
+    //     const mainInfo = baseUrl(pokemon)
+    //     const pokemonRes = await fetch(mainInfo)
+    //     const pokemonDataInText = await pokemonRes.text()
+    //     const $ = cheerio.load(pokemonDataInText)
+    //     const image = $(`img[src*=${pokemon}]`)
+    // }
     try {
         const pokedexEntryUrl = baseUrl(pokemon)
         const pokemonRes = await fetch(pokedexEntryUrl)
@@ -30,7 +35,8 @@ app.get('/api/whosThatApi/Pokemon', async (req, res) => {
         const $ = cheerio.load(pokemonDataInText)
         // const vitalsTable = $('main').get().map(val => $(val).text())
         // console.log(pokedexNumber)
-        const pokemonName = $(`h1:first`).text()
+        const pokemonName = $(`main > h1`).text()
+        console.log(`Pokemon Name: ${pokemonName}`)
         const nationalDexNum = $('td:first').text()
         const pokemonImage = $(`[src*=${pokemonName} i]`).attr('src')
         // const pokemonImage = $(`img:nth(1)`).attr('src');
@@ -52,9 +58,11 @@ app.get('/api/whosThatApi/Pokemon', async (req, res) => {
             })    
         } else {
             return res.send({
+                "Photo": pokemonImage,
+                "Name": pokemonName, 
                 "Pokedex Num": nationalDexNum,
                 "Type": type,
-                "Secondary Type": "",
+                // "Secondary Type": "",
                 "Species": species
             }) 
         }
