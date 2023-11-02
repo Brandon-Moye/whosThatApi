@@ -8,15 +8,26 @@ const port = 5353
 //Variables
 const baseUrl = (pokemon) => `https://pokemondb.net/pokedex/${pokemon}`
 const secretApiKey = process.env.APIKEY
+
+
+
+
 //MIDDLEWARE
 app.use(require('cors')())
+
+function middlewareInterceptor(req, res, next) {
+    const { password } = req.query
+    if (password !=='mudkip-rules') { return res.sendStatus(403)}
+    next()
+}
+
 
 //ROUTES
 app.get('/', (req, res) => {
     res.status(200).send({message: 'Thank you for trying our API'})
 })
 
-app.get('/api/whosThatApi/Pokemon', async (req, res) => {
+app.get('/api/whosThatApi/Pokemon', middlewareInterceptor ,async (req, res) => {
     const { pokemon } = req.query
     if(!pokemon) {
         return res.sendStatus(403)
