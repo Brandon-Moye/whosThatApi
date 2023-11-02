@@ -1,6 +1,6 @@
 ###
-GET http://localhost:5353/api/whosThatApi/Pokemon?pokemon=charizard&password=mudkip-rules
+GET http://localhost:5353/api/whosThatApi/Pokemon?pokemon=blissey&password=mudkip-rules
 
 
 ###
-GET https://whos-that-api.onrender.com/api/whosThatApi/Pokemon?pokemon=mudkip&password=mudkip-rules
+GET https://whos-that-api.onrender.com/api/whosThatApi/Pokemon?pokemon=drifloon&password=mudkip-rules
