@@ -1,4 +1,4 @@
-# WHO'S THAT API!?
+# WHO'S. THAT. API!?
 
 ## I've taken another interest of mine (Pokemon) to create an API
 
