@@ -33,70 +33,45 @@ app.get('/api/whosThatApi/Pokemon', middlewareInterceptor ,async (req, res) => {
         return res.sendStatus(403)
     }
 
-    // if (pokemon === "national") {
-    //     const mainInfo = baseUrl(pokemon)
-    //     const pokemonRes = await fetch(mainInfo)
-    //     const pokemonDataInText = await pokemonRes.text()
-    //     const $ = cheerio.load(pokemonDataInText)
-    //     const image = $(`img[src*=${pokemon}]`)
-    // }
     try {
         const pokedexEntryUrl = baseUrl(pokemon)
         const pokemonRes = await fetch(pokedexEntryUrl)
         const pokemonDataInText = await pokemonRes.text()
         const $ = cheerio.load(pokemonDataInText)
-        // const vitalsTable = $('main').get().map(val => $(val).text())
-        // console.log(pokedexNumber)
-        const pokemonName = $(`main > h1`).text()
-        console.log(`Pokemon Name: ${pokemonName}`)
-        const nationalDexNum = $('td:first').text()
-        const pokemonImage = $(`[src*=${pokemonName} i]`).attr('src')
-        // const pokemonImage = $(`img:nth(1)`).attr('src');
+        function getPokemonDetails($, selectors) {    
+            const details = {};
 
-        let type = $('.itype:first').text()
-        const secondaryTyping = $('table[class="vitals-table"] > tbody > tr:nth(1) > td > a:nth(1)').text()
-        const species = $('td:nth(2)').text()
-        let eggGroup = $('[href*=egg]:first').text()
-        // const eggGroupTwo = $('[href*=egg]:nth(1)').text()
-        const eggGroupTwo = $('[href*=egg]:first + a').text()
+            const pokemonImage = $(`[src*=${pokemon} i]`).attr('src')
+            details.pokemonImage = pokemonImage
+
+            selectors.forEach(selector => {
+                const key = selector.key
+                const cheerioSelector = selector.selector
+                details[key] = $(cheerioSelector).text()
+            })
+
+            return details;
+        }
+
+        const selectors = [
+            { key: 'pokemonName', selector: 'main > h1' },
+            { key: 'nationalDexNum', selector: 'td:first' },
+            { key: 'type', selector: '.itype:first' },
+            { key: 'secondaryTyping', selector: 'table[class="vitals-table"] > tbody > tr:nth(1) > td > a:nth(1)' },
+            { key: 'species', selector: 'td:nth(2)' },
+            { key: 'eggGroup', selector: '[href*=egg]:first' },
+            { key: 'eggGroupTwo', selector: '[href*=egg]:first + a' }        ]
+
+        const pokemonDetails = getPokemonDetails($, selectors)
         res.status(200)
-        // return res.send([nationalDexNum, type, species])
-
-        if (secondaryTyping) {
-            type = [type, secondaryTyping]       
-        }
-        if (eggGroupTwo) {
-            eggGroup = [eggGroup, eggGroupTwo]
-        }
-        if (type !== secondaryTyping) {
             return res.send({
-
-                "Photo": pokemonImage,
-                "Name": pokemonName,
-                "Pokedex Num": nationalDexNum,
-                "Type(s)": [type],
-                // "Secondary Type": secondaryTyping,
-                "Species": species,
-                "Egg Group(s)": [eggGroup]
+                "Pokemon Details": pokemonDetails,
             })    
-        } 
-        if (secondaryTyping) {
-        
-        }
-        else {
-            // return res.send({
-            //     "Photo": pokemonImage,
-            //     "Name": pokemonName, 
-            //     "Pokedex Num": nationalDexNum,
-            //     "Type": type,
-            //     "Species": species,
-            //     "Egg Group(s)": [eggGroupOne, eggGroupTwo]
-
-            // }) 
-        }
+        // } 
     } catch (err) {
         console.log(`Looks like Team Rocket is blasting off again! ${err}`)
         res.sendStatus(500)
     }
 })
+
 app.listen(port, () => console.log(`Lets research some Pokemon! ${port}`))
