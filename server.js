@@ -32,10 +32,10 @@ app.get('/api/whosThatApi/Pokemon', middlewareInterceptor ,async (req, res) => {
     if(!pokemon) {
         return res.sendStatus(403)
     }
-
     try {
         const pokedexEntryUrl = baseUrl(pokemon)
         const pokemonRes = await fetch(pokedexEntryUrl)
+        if(pokemonRes.status !== 404) {
         const pokemonDataInText = await pokemonRes.text()
         const $ = cheerio.load(pokemonDataInText)
         function getPokemonDetails($, selectors) {    
@@ -49,7 +49,6 @@ app.get('/api/whosThatApi/Pokemon', middlewareInterceptor ,async (req, res) => {
                 const cheerioSelector = selector.selector
                 details[key] = $(cheerioSelector).text()
             })
-
             return details;
         }
 
@@ -68,6 +67,15 @@ app.get('/api/whosThatApi/Pokemon', middlewareInterceptor ,async (req, res) => {
                 "Pokemon Details": pokemonDetails,
             })    
         // } 
+        }
+        if(pokemonRes.status === 404) {
+            res.status(404)
+            return res.send({
+                "Pokemon Details": {
+                    "pokemonName": "Pokemon Not Found"
+                }
+            })
+        }
     } catch (err) {
         console.log(`Looks like Team Rocket is blasting off again! ${err}`)
         res.sendStatus(500)
@@ -75,3 +83,11 @@ app.get('/api/whosThatApi/Pokemon', middlewareInterceptor ,async (req, res) => {
 })
 
 app.listen(port, () => console.log(`Lets research some Pokemon! ${port}`))
+
+app.use((req, res, next) => {
+    res.status(404).send({
+       "Pokemon Details": {
+            "pokemonName": "Pokemon Not Found"
+       }
+    })
+})
